@@ -1,0 +1,31 @@
+{
+  "private": true,
+  "name": "Tello",
+  "description": "Aplicativo para controlar odrone Tello pelo computador",
+  "version": "1.0.0",
+  "author": "Iann Ortnau Cirio e Santos <ortnau.iann@gmail.com>",
+  "main": "app/background.js",
+  "scripts": {
+    "dev": "nextron",
+    "build": "nextron build",
+    "postinstall": "electron-builder install-app-deps"
+  },
+  "dependencies": {
+    "dji-tello": "^1.0.15",
+    "electron-serve": "^1.1.0",
+    "electron-store": "^8.0.1",
+    "h264decoder": "^1.0.0",
+    "node-media-server": "^2.3.8",
+    "react-hls": "^0.0.8",
+    "tello-drone": "^3.0.6",
+    "ws": "^8.4.0"
+  },
+  "devDependencies": {
+    "electron": "^15.0.0",
+    "electron-builder": "^22.11.7",
+    "next": "^11.1.2",
+    "nextron": "^7.1.0",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2"
+  }
+}
