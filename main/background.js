@@ -5,13 +5,10 @@ const isProd = process.env.NODE_ENV === 'production';
 import { spawn , exec } from "child_process";
 import * as fs from "fs";
 
-let p1 = null;
-let p2 = null;
+let mainWindow = null;
 
-//exec("ffmpeg -re -i udp://0.0.0.0:11111 -c copy -r 30 -b 800k -f flv rtmp://localhost/live/tello");
-//exec("ffplay -i udp://0.0.0.0:11111 -fflags nobuffer -fflags discardcorrupt -flags low_delay -framedrop -avioflags direct -f hls -hls_time 4 -hls_playlist_type event ./stream/stream.m3u8");
-//ffmpeg -re -i udp://0.0.0.0:11111 -fflags nobuffer -flags low_delay ./stream/stream.m3u8
-//ffmpeg -re -i udp://0.0.0.0:11111 -fflags nobuffer -flags low_delay -f hls -hls_time 4 -hls_playlist_type event ./render/public/stream.m3u8 || ffplay ./stream/stream.m3u8
+let p1 = null;
+
 if (isProd) {
   serve({ directory: 'app' });
 } else {
@@ -21,9 +18,14 @@ if (isProd) {
 (async () => {
   await app.whenReady();
 
-  const mainWindow = createWindow('main', {
-    width: 1000,
-    height: 600,
+  mainWindow = createWindow('main', {
+    width: 960,
+    height: 540,
+    minHeight:540,
+    maxHeight:540,
+    maxWidth:960,
+    minWidth:960,
+    resizable:false,
   });
 
   if (isProd) {
@@ -31,20 +33,26 @@ if (isProd) {
   } else {
     const port = process.argv[2];
     await mainWindow.loadURL(`http://localhost:${port}/home`);
-    mainWindow.webContents.openDevTools();
+    //mainWindow.webContents.openDevTools();
   }
 })();
 
 app.on('window-all-closed', () => {
-  //p1.kill();
+  if(p1){
+    p1.kill();
+  }
   app.quit();
 });
 
+ipcMain.on('reload', (event, msg) => {
+  mainWindow.reload();
+});
+
+/*
 let auxFfmpeg = null;
 ipcMain.on('decode', (event, msg) => {
-
   if (msg === "run") {
-    p1 = exec('ffmpeg -i udp://0.0.0.0:11111 -f sdl "Tello"');
+    p1 = exec('gst-launch-1.0 -v udpsrc port=11111 ! decodebin ! videoconvert ! autovideosink');
 
     p1.stdout.on('data', (data) => {
       console.log(`stdout: ${data}`);
@@ -55,7 +63,8 @@ ipcMain.on('decode', (event, msg) => {
     });
   }
   if (msg === "kill") {
-    //p1.stop();
+    p1.kill();
   }
   event.reply('decode-resp', 'pong');
 });
+*/
